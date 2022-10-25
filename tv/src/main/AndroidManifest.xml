@@ -15,7 +15,8 @@
 
         <activity
             android:name=".activities.MainActivity"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,7 +30,8 @@
             android:icon="@drawable/ic_notification_icon"
             android:theme="@style/Theme.Transparent"
             android:launchMode="singleTop"
-            android:noHistory="true">
+            android:noHistory="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

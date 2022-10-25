@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ServiceInfo;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Build;
@@ -175,7 +176,7 @@ public class HyperionScreenService extends Service {
                         boolean isPrepared = prepared();
                         if (isPrepared) {
                             startScreenRecord(intent);
-                            startForeground(NOTIFICATION_ID, getNotification());
+                            startForeground(NOTIFICATION_ID, getNotification(), ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION);
 
                             IntentFilter intentFilter = new IntentFilter();
                             intentFilter.addAction(Intent.ACTION_SCREEN_ON);

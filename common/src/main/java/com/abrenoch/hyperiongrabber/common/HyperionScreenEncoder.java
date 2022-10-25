@@ -136,7 +136,7 @@ public class HyperionScreenEncoder extends HyperionScreenEncoderBase {
             if (mListener != null && isCapturing()) {
                 try {
                     long now = System.nanoTime();
-                    Image img = reader.acquireLatestImage();
+                    Image img = reader.acquireNextImage();
                     if (img != null && now - lastFrame >= min_nano_time) {
                         sendImage(img);
                         img.close();

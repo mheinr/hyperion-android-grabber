@@ -11,7 +11,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.4'
+        classpath 'com.android.tools.build:gradle:4.2.2'
         classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.8'
     }
 }
@@ -24,11 +24,11 @@ repositories {
 }
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 31
     defaultConfig {
         applicationId "com.abrenoch.hyperiongrabber"
-        minSdkVersion 21
-        targetSdkVersion 26
+        minSdkVersion 31
+        targetSdkVersion 31
         versionCode 2012
         versionName "1.0"
     }
