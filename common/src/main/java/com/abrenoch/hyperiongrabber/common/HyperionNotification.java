@@ -8,8 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Icon;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.NotificationCompat;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
 
 public class HyperionNotification {
     private final String NOTIFICATION_CHANNEL_ID = "com.abrenoch.hyperiongrabber.notification";
@@ -34,7 +34,7 @@ public class HyperionNotification {
 
     public void setAction(int code, String label, Intent intent) {
         PendingIntent pendingIntent = PendingIntent.getService(mContext, code,
-                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                intent, PendingIntent.FLAG_IMMUTABLE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             mAction = new Notification.Action.Builder(
@@ -57,7 +57,7 @@ public class HyperionNotification {
         if (intent != null) {
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             pIntent = PendingIntent.getActivity(mContext, PENDING_INTENT_REQUEST_CODE,
-                    intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    intent, PendingIntent.FLAG_IMMUTABLE);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Notification.Builder builder = new Notification.Builder(mContext, NOTIFICATION_CHANNEL_ID)

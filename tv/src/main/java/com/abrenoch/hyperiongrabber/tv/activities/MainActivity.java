@@ -1,5 +1,6 @@
 package com.abrenoch.hyperiongrabber.tv.activities;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
@@ -8,14 +9,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatDelegate;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.appcompat.app.AppCompatDelegate;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -30,6 +34,7 @@ import com.abrenoch.hyperiongrabber.tv.R;
 public class MainActivity extends LeanbackActivity implements ImageView.OnClickListener,
         ImageView.OnFocusChangeListener {
     public static final int REQUEST_MEDIA_PROJECTION = 1;
+    private static final int FOREGROUND_SERVICE_MEDIA_PROJECTION_REQUEST_CODE = 124;
     public static final int REQUEST_INITIAL_SETUP = 2;
     public static final String BROADCAST_ERROR = "SERVICE_ERROR";
     public static final String BROADCAST_TAG = "SERVICE_STATUS";
@@ -54,12 +59,40 @@ public class MainActivity extends LeanbackActivity implements ImageView.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestForegroundServiceMediaProjectionPermission();
 
-        if (!initIfConfigured()){
-            startSetup();
+
+
+    }
+
+    private void requestForegroundServiceMediaProjectionPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION)
+                == PackageManager.PERMISSION_GRANTED) {
+            if (!initIfConfigured()){
+                startSetup();
+            }
+            // Permission is already granted, proceed with your logic (e.g., start screen capture)
+        } else {
+            // Permission is not granted, request it
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{Manifest.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION},
+                    FOREGROUND_SERVICE_MEDIA_PROJECTION_REQUEST_CODE
+            );
         }
+    }
 
-
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == FOREGROUND_SERVICE_MEDIA_PROJECTION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, proceed with your logic (e.g., start screen capture)
+            } else {
+                // Permission denied, handle accordingly (e.g., show an error message)
+                Toast.makeText(this, "Foreground Service Media Projection permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     /** @return whether the activity was initialized */

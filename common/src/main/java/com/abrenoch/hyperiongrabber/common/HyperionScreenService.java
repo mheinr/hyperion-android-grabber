@@ -8,13 +8,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ServiceInfo;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Build;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.WindowManager;
@@ -175,7 +178,7 @@ public class HyperionScreenService extends Service {
                         boolean isPrepared = prepared();
                         if (isPrepared) {
                             startScreenRecord(intent);
-                            startForeground(NOTIFICATION_ID, getNotification());
+                            startForeground(NOTIFICATION_ID, getNotification(), ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION);
 
                             IntentFilter intentFilter = new IntentFilter();
                             intentFilter.addAction(Intent.ACTION_SCREEN_ON);
@@ -251,21 +254,27 @@ public class HyperionScreenService extends Service {
         if (DEBUG) Log.v(TAG, "Start screen recorder");
         final int resultCode = intent.getIntExtra(EXTRA_RESULT_CODE, 0);
         // get MediaProjection
-        final MediaProjection projection = mMediaProjectionManager.getMediaProjection(resultCode, intent);
-        WindowManager window = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-        if (projection != null && window != null) {
-            _mediaProjection = projection;
-            final DisplayMetrics metrics = new DisplayMetrics();
-            window.getDefaultDisplay().getRealMetrics(metrics);
-            final int density = metrics.densityDpi;
-            HyperionGrabberOptions options = new HyperionGrabberOptions(mHorizontalLEDCount,
-                    mVerticalLEDCount, mFrameRate, mSendAverageColor);
-            if (DEBUG) Log.v(TAG, "Starting the recorder");
-            mHyperionEncoder = new HyperionScreenEncoder(mHyperionThread.getReceiver(),
-                    projection, metrics.widthPixels, metrics.heightPixels,
-                    density, options);
-            mHyperionEncoder.sendStatus();
-        }
+        // delay needed because getMediaProjection() throws an error if it's called too soon
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                final MediaProjection projection = mMediaProjectionManager.getMediaProjection(resultCode, intent);
+                WindowManager window = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+                if (projection != null && window != null) {
+                    _mediaProjection = projection;
+                    final DisplayMetrics metrics = new DisplayMetrics();
+                    window.getDefaultDisplay().getRealMetrics(metrics);
+                    final int density = metrics.densityDpi;
+                    HyperionGrabberOptions options = new HyperionGrabberOptions(mHorizontalLEDCount,
+                            mVerticalLEDCount, mFrameRate, mSendAverageColor);
+                    if (DEBUG) Log.v(TAG, "Starting the recorder");
+                    mHyperionEncoder = new HyperionScreenEncoder(mHyperionThread.getReceiver(),
+                            projection, metrics.widthPixels, metrics.heightPixels,
+                            density, options);
+                    mHyperionEncoder.sendStatus();
+                }
+            }
+        }, 1000);
     }
 
     private void stopScreenRecord() {
