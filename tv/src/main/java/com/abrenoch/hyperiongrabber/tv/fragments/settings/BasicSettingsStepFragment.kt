@@ -281,6 +281,7 @@ internal class BasicSettingsStepFragment : SettingsStepBaseFragment() {
 
             private val contextRef = WeakReference(context)
 
+            @Deprecated("Deprecated in Java")
             override fun doInBackground(vararg params: TestSpec?): Int {
                 try {
                     val (host, port, priority, color) = params[0]!!
@@ -299,6 +300,7 @@ internal class BasicSettingsStepFragment : SettingsStepBaseFragment() {
                 }
             }
 
+            @Deprecated("Deprecated in Java")
             override fun onPostExecute(result: Int) {
                 contextRef.get()?.run {
                     val messageRes = when(result){
