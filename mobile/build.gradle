@@ -9,7 +9,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath 'com.android.tools.build:gradle:8.7.2'
         classpath 'com.google.protobuf:protobuf-gradle-plugin:0.9.1'
     }
 }
@@ -40,6 +40,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
         sourceCompatibility JavaVersion.VERSION_1_8
     }
+    namespace 'com.abrenoch.hyperiongrabber.mobile'
 }
 
 dependencies {
