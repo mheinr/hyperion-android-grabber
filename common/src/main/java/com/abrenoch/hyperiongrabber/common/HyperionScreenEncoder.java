@@ -26,12 +26,16 @@ public class HyperionScreenEncoder extends HyperionScreenEncoderBase {
     private static final boolean DEBUG = false;
     private VirtualDisplay mVirtualDisplay;
     private ImageReader mImageReader;
+    private MediaProjection.Callback mMediaProjectionCallback;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     HyperionScreenEncoder(final HyperionThread.HyperionThreadListener listener,
                            final MediaProjection projection, final int width, final int height,
                            final int density, HyperionGrabberOptions options) {
         super(listener, projection, width, height, density, options);
+
+        mMediaProjectionCallback = new MediaProjectionCallback();
+        mMediaProjection.registerCallback(mMediaProjectionCallback, null);
 
         try {
             prepare();
@@ -61,6 +65,10 @@ public class HyperionScreenEncoder extends HyperionScreenEncoderBase {
         mVirtualDisplay.release();
         mHandler.getLooper().quit();
         clearAndDisconnect();
+        if (mMediaProjectionCallback != null) {
+            mMediaProjection.unregisterCallback(mMediaProjectionCallback);
+            mMediaProjectionCallback = null;
+        }
         if (mImageReader != null) {
             mImageReader.close();
             mImageReader = null;
@@ -238,6 +246,23 @@ public class HyperionScreenEncoder extends HyperionScreenEncoderBase {
                     width - firstX * 2,
                     height - firstY * 2
             );
+        }
+    }
+    private class MediaProjectionCallback extends MediaProjection.Callback {
+        @Override
+        public void onStop() {
+            if (DEBUG) Log.d(TAG, "MediaProjection stopped");
+            // Release resources, e.g., stop encoding, release virtual display
+            // ... your cleanup logic ...
+            // You might want to call stopRecording() here or perform similar cleanup
+            HyperionScreenEncoder.this.stopRecording();
+        }
+
+
+        public void onError(int error, String message) {
+            if (DEBUG) Log.e(TAG, "MediaProjection error: " + error + ", " + message);
+            // Handle errors
+            // ... your error handling logic ...
         }
     }
 }

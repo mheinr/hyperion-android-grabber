@@ -8,6 +8,8 @@
         android:name="android.software.leanback"
         android:required="true" />
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />  <!-- Normal permission -->
+
     <application
         android:banner="@drawable/banner"
         android:theme="@style/Theme.Leanback">
