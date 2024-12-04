@@ -25,11 +25,13 @@
     <string name="pref_key_framerate" translatable="false">pref_key_framerate</string>
     <integer name="pref_default_framerate" translatable="false">30</integer>
     <string-array name="pref_list_framerate_values" translatable="false">
+        <item>8</item>
         <item>10</item>
         <item>15</item>
         <item>24</item>
         <item>30</item>
         <item>60</item>
+        <item>90</item>
     </string-array>
 
     <string name="pref_key_use_avg_color" translatable="false">pref_key_use_avg_color</string>
